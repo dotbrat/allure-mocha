@@ -36,18 +36,13 @@ function AllureReporter(runner, opts) {
     }));
 
     runner.on("test", invokeHandler(function(test) {
-        if (typeof test.currentRetry !== "function" || !test.currentRetry()) {
+        if ((typeof test.currentRetry !== "function" || !test.currentRetry()) && !test.pending) {
           allureReporter.startCase(test.title);
         }
     }));
 
     runner.on("pending", invokeHandler(function(test) {
-        var currentTest = allureReporter.getCurrentTest();
-        if(currentTest && currentTest.name === test.title) {
-            allureReporter.endCase("skipped");
-        } else {
-            allureReporter.pendingCase(test.title);
-        }
+        allureReporter.pendingCase(test.title);
     }));
 
     runner.on("pass", invokeHandler(function() {
